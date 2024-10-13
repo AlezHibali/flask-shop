@@ -7,7 +7,7 @@ from flask.helpers import get_debug_flag
 
 
 class DBConfig:
-    db_type = os.getenv("DB_TYPE", "mysql")
+    db_type = os.getenv("DB_TYPE", "sqlite")
     user = os.getenv("DB_USER", "root")
     passwd = os.getenv("DB_PASSWD", "123456")
     host = os.getenv("DB_HOST", "127.0.0.1")
@@ -19,6 +19,14 @@ class DBConfig:
         db_uri = (
             f"mysql+pymysql://{user}:{passwd}@{host}:{port}/{db_name}?charset=utf8mb4"
         )
+    elif db_type == "sqlite":
+        basedir = Path(__file__).resolve().parent
+        DATABASE = "flaskr.db"
+        url = f"sqlite:///{Path(basedir).joinpath(DATABASE)}"
+        if url.startswith("postgres://"):
+            url = url.replace("postgres://", "postgresql://", 1)
+        db_uri = url
+
     redis_uri = "redis://localhost:6379"
     esearch_uri = "localhost"
 
